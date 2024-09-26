@@ -42,7 +42,7 @@ public:
     }
 
     // Оператор сложения матриц
-    _matrix<T> operator +(const _matrix& other) const
+    /*_matrix<T> operator +(const _matrix& other) const
     {
         if (mat.size() == other.mat.size() && mat[0].size() == other.mat[0].size())
         {
@@ -57,28 +57,67 @@ public:
             return result;
         }
         throw std::invalid_argument("Матрицы должны быть одинакового размера.");
-    }
+    }*/
 
+    _matrix<T> operator +(const _matrix& other) const
+    {
+        if (mat.size() != other.mat.size() || mat[0].size() != other.mat[0].size())
+        {
+            cout << "Предупреждение: Размеры матриц не совпадают. Операция сложения пропущена." << endl;
+            return *this;  // Возвращаем текущую матрицу без изменений
+        }
+
+        _matrix<T> result(0, mat.size(), mat[0].size());  // Создаем результирующую матрицу
+        for (int i = 0; i < mat.size(); ++i)
+        {
+            for (int j = 0; j < mat[0].size(); ++j)
+            {
+                result.mat[i][j] = mat[i][j] + other.mat[i][j];
+            }
+        }
+        return result;
+    }
     // Оператор вычитания матриц
     _matrix<T> operator -(const _matrix& other) const
     {
-        if (mat.size() == other.mat.size() && mat[0].size() == other.mat[0].size())
+        if (mat.size() != other.mat.size() || mat[0].size() != other.mat[0].size())
         {
-            _matrix<T> result(0, mat.size(), mat[0].size());
-            for (int i = 0; i < mat.size(); ++i)
-            {
-                for (int j = 0; j < mat[i].size(); ++j)
-                {
-                    result(i, j) = mat[i][j] - other.mat[i][j];
-                }
-            }
-            return result;
+            cout << "Предупреждение: Размеры матриц не совпадают. Операция вычитания пропущена." << endl;
+            return *this;  // Возвращаем текущую матрицу без изменений
         }
-        throw std::invalid_argument("Матрицы должны быть одинакового размера.");
+
+        _matrix<T> result(0, mat.size(), mat[0].size());  // Создаем результирующую матрицу
+        for (int i = 0; i < mat.size(); ++i)
+        {
+            for (int j = 0; j < mat[0].size(); ++j)
+            {
+                result.mat[i][j] = mat[i][j] - other.mat[i][j];
+            }
+        }
+        return result;
     }
+
 
     // Оператор умножения матриц
     _matrix<T> operator *(const _matrix& other) const
+    {
+        if (mat[0].size() != other.mat.size())
+        {
+            cout << "Предупреждение: Размеры матриц не совпадают. Операция умножения пропущена." << endl;
+            return *this;  // Возвращаем текущую матрицу без изменений
+        }
+
+        _matrix<T> result(0, mat.size(), mat[0].size());  // Создаем результирующую матрицу
+        for (int i = 0; i < mat.size(); ++i)
+        {
+            for (int j = 0; j < mat[0].size(); ++j)
+            {
+                result.mat[i][j] = mat[i][j] - other.mat[i][j];
+            }
+        }
+        return result;
+    }
+    /*_matrix<T> operator *(const _matrix& other) const
     {
         if (mat[0].size() == other.mat.size())
         {
@@ -96,7 +135,7 @@ public:
             return result;
         }
         throw std::invalid_argument("Число столбцов первой матрицы должно быть равно числу строк второй.");
-    }
+    }*/
 
     // Оператор умножения матрицы на константу
     _matrix<T> operator *(T constant) const

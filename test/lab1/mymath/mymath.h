@@ -3,6 +3,8 @@
 
 #include"vector.h"
 #include"matrix.h"
+#include"funct.h"
+//#include"lambda.h"
 
 namespace mymath
 {
