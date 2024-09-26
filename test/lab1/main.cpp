@@ -48,5 +48,59 @@ int main()
     cout << "c4 (a * 2.0) is ";
     c4.print();
 
+
+
+
+
+    // Создаем две матрицы 3x3
+    _matrix<double> mat1(2.0, 3, 3);
+    _matrix<double> mat2(1.0, 3, 3);
+
+    // Инициализируем элементы матриц
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            mat1(i, j) = i + j;   // mat1 = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+            mat2(i, j) = i - j;   // mat2 = [[0, -1, -2], [1, 0, -1], [2, 1, 0]]
+        }
+    }
+
+    cout << "Матрица 1:\n";
+    mat1.print();
+
+    cout << "\nМатрица 2:\n";
+    mat2.print();
+
+    // Операция сложения матриц
+    _matrix<double> sum = mat1 + mat2;
+    cout << "\nСумма матриц 1 и 2:\n";
+    sum.print();
+
+    // Операция вычитания матриц
+    _matrix<double> diff = mat1 - mat2;
+    cout << "\nРазность матриц 1 и 2:\n";
+    diff.print();
+
+    // Операция умножения матриц
+    _matrix<double> prod = mat1 * mat2;
+    cout << "\nПроизведение матриц 1 и 2:\n";
+    prod.print();
+
+    // Умножение матрицы на константу
+    _matrix<double> scalarProd = mat1 * 3.0;
+    cout << "\nУмножение матрицы 1 на 3.0:\n";
+    scalarProd.print();
+
+   
+
+    _matrix<double> mat11(2.0, 2, 2);
+    _matrix<double> mat22(1.0, 3, 3);
+    _matrix<double> diff1 = mat11 - mat22;
+    cout << "\nРазность матриц 11 и 22:\n";
+    diff1.print();
+    mat11.print();
+    mat22.print();
+
     return 0;
 }

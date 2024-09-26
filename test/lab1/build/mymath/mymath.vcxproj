@@ -254,11 +254,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D:\программы\matematic\project\matematic\test\lab1\mymath\mymath.cpp" />
-    <ClCompile Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\matrix.cpp" />
-    <ClCompile Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\vector.cpp" />
     <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\mymath.h" />
-    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\matrix.h" />
-    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\vector.h" />
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\matrix.h" />
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\vector.h" />
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h" />
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\lambda.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="D:\программы\matematic\project\matematic\test\lab1\build\ZERO_CHECK.vcxproj">

@@ -6,10 +6,10 @@ project(${project})
 set(CMAKE_CXX_STANDARD 20)
 
 set(${project}_SOURCES
-        mymath.cpp matrix.cpp vector.cpp)
+        mymath.cpp)
 
 set(${project}_HEADERS
-        mymath.h matrix.h vector.h)
+        mymath.h matrix.h vector.h funct.h lambda.h)
 
 set(${project}_SOURCE_LIST
         ${${project}_SOURCES}

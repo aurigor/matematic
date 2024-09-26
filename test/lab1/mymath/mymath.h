@@ -2,6 +2,7 @@
 #define MYMATH_H
 
 #include"vector.h"
+#include"matrix.h"
 
 namespace mymath
 {

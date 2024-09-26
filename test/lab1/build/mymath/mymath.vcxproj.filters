@@ -4,21 +4,21 @@
     <ClCompile Include="D:\программы\matematic\project\matematic\test\lab1\mymath\mymath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\matrix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\vector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\mymath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\matrix.h">
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\build\mymath\vector.h">
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\lambda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
