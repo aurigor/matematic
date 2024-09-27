@@ -4,6 +4,8 @@
 #include"vector.h"
 #include"matrix.h"
 #include"funct.h"
+#include"example.h"
+#include"spline.h"
 //#include"lambda.h"
 
 namespace mymath

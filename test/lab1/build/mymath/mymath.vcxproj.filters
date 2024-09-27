@@ -21,6 +21,12 @@
     <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\lambda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\example.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\spline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\программы\matematic\project\matematic\test\lab1\mymath\CMakeLists.txt" />

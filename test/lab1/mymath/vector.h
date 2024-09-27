@@ -2,17 +2,23 @@
 #define VECTOR
 #include<iostream>
 #include<vector>
+#include<math.h>
 
 using namespace std;
+
+
+
+/// сделать обработчик исключений
+/// перегрузить все операторы
+/// добавить методы 
+/// решить проблему с делением на ноль
+/// 
 
 template<typename T>
 class _vector {
 public:
     //  онструктор с параметрами
-    _vector(T a = 0, int size = 1) : vec(size, a)
-    {
-        // »нициализаци€ вектора значением 'a' и размером 'size'
-    }
+    _vector(T a = 0, int size = 1) : vec(size, a) {}
 
     //  онструктор по умолчанию
     _vector() {}
@@ -30,7 +36,7 @@ public:
         return vec[index]; //  онстантна€ верси€ дл€ доступа только дл€ чтени€
     }
 
-    std::vector<double> get() const
+    std::vector<T> get() const
     {
         return vec;
     }
@@ -44,6 +50,15 @@ public:
         std::cout << "\n";
     }
 
+    void add(T element) 
+    {
+        vec.push_back(element);
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // операторы
     // ќператор сложени€
     _vector<T> operator +(const _vector& other) const
     {
@@ -88,7 +103,54 @@ public:
         }
         throw std::invalid_argument("¬ектора должны быть одинакового размера.");
     }
+    _vector<T> operator /(const _vector& other) const
+    {
+        if (vec.size() == other.vec.size())
+        {
+            _vector<T> result(0, vec.size());  // —оздаем результирующий вектор того же размера
+            for (int i = 0; i < vec.size(); ++i)
+            {
+                if (other.vec[i]!=0)
+                {
+                    result.vec[i] = vec[i] / other.vec[i];
+                }
+                else
+                {
+                    result.vec[i] = NAN;
+                    //result.vec[i] = 0;
+                }
 
+            }
+            return result;
+        }
+        throw std::invalid_argument("¬ектора должны быть одинакового размера.");
+    }
+    _vector<T> operator %(const _vector& other) const
+    {
+        if (vec.size() == other.vec.size())
+        {
+            _vector<T> result(0, vec.size());  // —оздаем результирующий вектор того же размера
+            for (int i = 0; i < vec.size(); ++i)
+            {
+                result.vec[i] = vec[i] % other.vec[i];
+            }
+            return result;
+        }
+        throw std::invalid_argument("¬ектора должны быть одинакового размера.");
+    }
+    _vector<T> operator ^(const _vector& other) const
+    {
+        if (vec.size() == other.vec.size())
+        {
+            _vector<T> result(0, vec.size());  // —оздаем результирующий вектор того же размера
+            for (int i = 0; i < vec.size(); ++i)
+            {
+                result.vec[i] = pow(vec[i], other.vec[i]);
+            }
+            return result;
+        }
+        throw std::invalid_argument("¬ектора должны быть одинакового размера.");
+    }
     // ќператор скал€рного произведени€
     T scalar_product(const _vector& other) const
     {
@@ -114,12 +176,6 @@ public:
         }
         return result;
     }
-
-    int size() const
-    {
-        return vec.size();
-    }
-
     _vector& operator =(const _vector& other)
     {
         if (this != &other)
@@ -128,6 +184,24 @@ public:
         }
         return *this;
     }
+    //возведение в степень константу
+    _vector<T> operator ^(T constant) const
+    {
+        _vector<T> result(0, vec.size());  // —оздаем результирующий вектор того же размера
+        for (int i = 0; i < vec.size(); ++i)
+        {
+            result.vec[i] = pow(vec[i], constant);
+        }
+        return result;
+    }
+
+
+    int size() const
+    {
+        return vec.size();
+    }
+
+    
 
 private:
     vector<T> vec;

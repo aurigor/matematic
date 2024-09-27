@@ -259,6 +259,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\vector.h" />
     <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h" />
     <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\lambda.h" />
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\example.h" />
+    <ClInclude Include="D:\программы\matematic\project\matematic\test\lab1\mymath\spline.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="D:\программы\matematic\project\matematic\test\lab1\build\ZERO_CHECK.vcxproj">

@@ -9,7 +9,7 @@ set(${project}_SOURCES
         mymath.cpp)
 
 set(${project}_HEADERS
-        mymath.h matrix.h vector.h funct.h lambda.h)
+        mymath.h matrix.h vector.h funct.h lambda.h example.h spline.h)
 
 set(${project}_SOURCE_LIST
         ${${project}_SOURCES}

@@ -1,16 +1,2 @@
 ﻿  mymath.cpp
-D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h(31,33): error C3520: "Args": пакет параметров должен раскрываться в этом контексте
-  (компиляция исходного файла "../../mymath/mymath.cpp")
-  
-D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h(31,33): error C3376: "Function::funcPtr": разрешены только шаблоны статических элементов данных
-  (компиляция исходного файла "../../mymath/mymath.cpp")
-  
-D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h(20,16): error C3245: "Function::funcPtr": для использование шаблона переменной требуется список аргументов шаблона
-  (компиляция исходного файла "../../mymath/mymath.cpp")
-  D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h(31,33):
-   см. объявление "Function::funcPtr"
-  D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h(20,23):
-  "funcPtr": объявление функции должно быть доступно, так как ни один из аргументов не зависит от параметра шаблона
-  D:\программы\matematic\project\matematic\test\lab1\mymath\funct.h(18,12):
-  Сообщение диагностики возникло в созданной компилятором функции "double Function::operator ()(Args...) const"
-  
+  mymath.vcxproj -> D:\программы\matematic\project\matematic\test\lab1\build\mymath\Release\mymath.lib
