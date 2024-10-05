@@ -1,5 +1,0 @@
-D:/программы/matematic/project/matematic/test/lab1/build/CMakeFiles/lab1.dir
-D:/программы/matematic/project/matematic/test/lab1/build/CMakeFiles/ALL_BUILD.dir
-D:/программы/matematic/project/matematic/test/lab1/build/CMakeFiles/ZERO_CHECK.dir
-D:/программы/matematic/project/matematic/test/lab1/build/mymath/CMakeFiles/mymath.dir
-D:/программы/matematic/project/matematic/test/lab1/build/mymath/CMakeFiles/ALL_BUILD.dir

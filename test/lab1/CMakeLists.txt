@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(${project}_SOURCES
         main.cpp)
 
-add_subdirectory(mymath)
+add_subdirectory(Matic)
 
 set(${project}_SOURCE_LIST
         ${${project}_SOURCES})
@@ -16,4 +16,4 @@ set(${project}_SOURCE_LIST
 add_executable(${project}
         ${${project}_SOURCE_LIST})
 
-target_link_libraries(${project} mymath)
+target_link_libraries(${project} Matic)
