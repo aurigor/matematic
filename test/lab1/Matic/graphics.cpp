@@ -27,15 +27,15 @@ void openGnuplot()
     }
     else
     {
-        std::cout << "Gnuplot успешно открыт." << std::endl;
+        std::wcout << L"Gnuplot успешно открыт." << std::endl;
     }
 }
 
 void wcloseGnuplot()
 {
-    std::cin.clear();
-    std::cin.ignore(std::cin.rdbuf()->in_avail());
-    std::cin.get();
+    std::wcin.clear();
+    std::wcin.ignore(std::wcin.rdbuf()->in_avail());
+    std::wcin.get();
     closeGnuplot();
 }
 
@@ -105,7 +105,7 @@ void closeGnuplot()
         }
         else
         {
-            std::cout << "Gnuplot успешно закрыт." << std::endl;
+            std::wcout << L"Gnuplot успешно закрыт." << std::endl;
         }
         gnuplotPipe = nullptr;  // Обнуляем указатель
     }
@@ -151,11 +151,59 @@ void plotSplineWithPoints(const std::vector<double>& x, const std::vector<double
     fputs(commands.str().c_str(), gnuplotPipe);
     fflush(gnuplotPipe);  // Обновляем буфер и отправляем данные в gnuplot
 
-    std::cout << "График успешно построен.\n";
+    std::wcout << L"График успешно построен.\n";
 }
-void plotSplineAndExactFunction(const std::vector<double>& original_x, const std::vector<double>& original_y,
-    const std::vector<double>& spline_x, const std::vector<double>& spline_y,
-    const std::vector<double>& exact_x, const std::vector<double>& exact_y)
+//void plotSplineAndExactFunction(const std::vector<double>& original_x, const std::vector<double>& original_y,
+//    const std::vector<double>& spline_x, const std::vector<double>& spline_y,
+//    const std::vector<double>& exact_x, const std::vector<double>& exact_y)
+//{
+//    if (!gnuplotPipe) return;
+//
+//    // Формирование команд для gnuplot
+//    std::ostringstream commands;
+//    commands << "set title 'Cubic Spline vs. Original Points and Exact Function'\n";
+//    commands << "set xlabel 'X'\n";
+//    commands << "set ylabel 'Y'\n";
+//    commands << "set grid\n";
+//
+//    // Отправляем таблицу исходных точек
+//    commands << "$data << EOD\n";
+//    for (size_t i = 0; i < original_x.size(); ++i)
+//    {
+//        commands << original_x[i] << " " << original_y[i] << "\n";
+//    }
+//    commands << "EOD\n";
+//
+//    // Отправляем данные для сплайна
+//    commands << "$spline << EOD\n";
+//    for (size_t i = 0; i < spline_x.size(); ++i)
+//    {
+//        commands << spline_x[i] << " " << spline_y[i] << "\n";
+//    }
+//    commands << "EOD\n";
+//
+//    // Отправляем данные для точной функции
+//    commands << "$exact << EOD\n";
+//    for (size_t i = 0; i < exact_x.size(); ++i)
+//    {
+//        commands << exact_x[i] << " " << exact_y[i] << "\n";
+//    }
+//    commands << "EOD\n";
+//
+//    // Построение графика: сплайн, оригинальные точки и точная функция
+//    commands << "plot $data with points pointtype 7 pointsize 1.5 linecolor 'red' title 'Original Points', \\\n";
+//    commands << "     $spline with lines linetype 1 linewidth 2 linecolor 'blue' title 'Cubic Spline', \\\n";
+//    commands << "     $exact with lines linetype 1 linewidth 2 linecolor 'green' title 'Exact Function'\n";
+//
+//    // Отправляем команды в gnuplot
+//    fputs(commands.str().c_str(), gnuplotPipe);
+//    fflush(gnuplotPipe);  // Обновляем буфер и отправляем данные в gnuplot
+//
+//    std::cout << "График успешно построен.\n";
+//}
+void plotSplineAndExactFunction(const _vector<double>& original_x, const _vector<double>& original_y,
+    const _vector<double>& spline_x, const _vector<double>& spline_y,
+    const _vector<double>& exact_x, const _vector<double>& exact_y)
 {
     if (!gnuplotPipe) return;
 
@@ -199,5 +247,5 @@ void plotSplineAndExactFunction(const std::vector<double>& original_x, const std
     fputs(commands.str().c_str(), gnuplotPipe);
     fflush(gnuplotPipe);  // Обновляем буфер и отправляем данные в gnuplot
 
-    std::cout << "График успешно построен.\n";
+    std::wcout << L"График успешно построен.\n";
 }

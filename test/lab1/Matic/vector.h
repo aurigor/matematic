@@ -79,6 +79,24 @@ public:
         return vec;
     }
 
+    T max() const
+    {
+        if (vec.size() != 0)
+        {
+            T max = vec[0];
+            for (const auto& item : vec)
+            {
+                if (item> max)
+                {
+                    max = item;
+                }
+            }
+            return max;
+        }
+        //temp
+        return 0;
+    }
+
     /*void print() const
     {
         for (int i = 0; i < vec.size(); ++i)
@@ -112,6 +130,8 @@ public:
     {
         vec.clear(); // Очистка внутреннего вектора
     }
+
+
     bool isBigger(const _vector& other) const
     {
         if (vec.size() > other.size())
@@ -229,7 +249,30 @@ public:
     }
 
     // Метод map
-    template <typename Func, typename U = decltype(std::declval<Func>()(std::declval<T>()))>
+    template < typename Func>
+    auto map(Func func)
+    {
+
+        _vector<T> result{};
+        for (auto i : this->vec| std::views::transform(func)) result.push_back(i);
+
+        return result;
+
+    }
+    /*template < typename Func, typename Seq>
+    auto map(Func func, const Seq& seq)
+    {
+
+        typedef typename Seq::value_type value_type;
+        using return_type = decltype(func(std::declval<value_type>()));
+
+        std::vector<return_type> result{};
+        for (auto i : seq | std::views::transform(func)) result.push_back(i);
+
+        return result;
+
+    }*/
+   /* template <typename Func, typename U = decltype(std::declval<Func>()(std::declval<T>()))>
     _vector<U> map(Func func) const
     {
         _vector<U> result;
@@ -238,10 +281,14 @@ public:
             result.add(func(item));
         }
         return result;
-    }
+    }*/
     void resize(size_t newSize, const T& value = T())
     {
         vec.resize(newSize, value);
+    }
+    void rename(wstring newName)
+    {
+        this->name = newName;
     }
 
     void add(T element)

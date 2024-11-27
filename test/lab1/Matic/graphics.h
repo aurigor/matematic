@@ -7,6 +7,7 @@
 #include <iostream>  // Для std::cerr
 #include <string>  // Для std::string
 
+#include "vector.h"
 // Функция для открытия Gnuplot
 void openGnuplot();
 
@@ -19,9 +20,12 @@ void plotSplineWithPoints(const std::vector<double>& x, const std::vector<double
     const std::vector<double>& spline_x, const std::vector<double>& spline_y);
 
 
-void plotSplineAndExactFunction(const std::vector<double>& original_x, const std::vector<double>& original_y,
-    const std::vector<double>& spline_x, const std::vector<double>& spline_y,
-    const std::vector<double>& exact_x, const std::vector<double>& exact_y);
+//void plotSplineAndExactFunction(const std::vector<double>& original_x, const std::vector<double>& original_y,
+//    const std::vector<double>& spline_x, const std::vector<double>& spline_y,
+//    const std::vector<double>& exact_x, const std::vector<double>& exact_y);
+void plotSplineAndExactFunction(const _vector<double>& original_x, const _vector<double>& original_y,
+    const _vector<double>& spline_x, const _vector<double>& spline_y,
+    const _vector<double>& exact_x, const _vector<double>& exact_y);
 
 
 

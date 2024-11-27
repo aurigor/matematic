@@ -6,10 +6,10 @@ project(${project})
 set(CMAKE_CXX_STANDARD 20)
 
 set(${project}_SOURCES
-        matic.cpp graphics.cpp)
+        matic.cpp graphics.cpp const.cpp)
 
 set(${project}_HEADERS
-        matic.h matrix.h vector.h funct.h lambda.h example.h spline.h graphics.h time.h inLagrange.h polynom.h)
+        matic.h matrix.h vector.h funct.h lambda.h example.h spline.h graphics.h time.h inLagrange.h polynom.h array.h methods.h integration.h)
 
 set(${project}_ADDITIONALLY
         ad-spline.h const.h)
@@ -29,6 +29,7 @@ add_library(${project}
 source_group("Source Files" FILES ${${project}_SOURCES})
 
 # Категория "Header Files"
+#source_group("Header Files" FILES ${${project}_HEADERS})
 source_group("Header Files" FILES ${${project}_HEADERS})
 
 # Категория "Additional Files" для ad-spline.h

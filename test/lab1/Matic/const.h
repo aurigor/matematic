@@ -5,8 +5,8 @@
 #include <string>
 
 
-std::string _undName = "UNDEFINED";
-std::wstring _wundName = L"UNDEFINED";
+extern std::string _undName;
+extern std::wstring _wundName;
 
 
 #endif

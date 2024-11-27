@@ -8,6 +8,8 @@
 #include<string>
 #include <random>
 #include <ranges>
+#include <type_traits>
+#include <concepts> 
 
 using namespace std;
 
@@ -20,13 +22,17 @@ using namespace std;
 /// добавить методы 
 /// решить проблему с делением на ноль
 /// 
+//static_assert(std::is_arithmetic<T>::value, "Template parameter T must be a numeric type (int, float, double, etc.)");
 
-template<typename T>
+// Определяем концепт Numeric, который ограничивает типы только числовыми
+template <typename T>
+concept Numeric = std::integral<T> || std::floating_point<T>;
+template<Numeric T>
 class _polynom {
 public:
     // Конструктор с параметрами
     //_vector(T a = 0, int size = 1) : vec(size, a) {}
-    _polynom(T a = 0, int degree = 0, wstring name = _wundName) :name(name) {
+    _polynom (T a = 0, int degree = 0, wstring name = _wundName) :name(name) {
         pol.resize(degree + 1, a);
     }
     _polynom(const _vector<T>& vec, wstring name):name(name)
@@ -321,6 +327,26 @@ public:
         {
             if (i <= tSize) result[i] += this->pol[i];
             if (i <= oSize) result[i] += other.pol[i];
+        }
+        //_polynom<T> resPol(result);
+        //return resPol;
+        return result.chekDegree();
+    }
+    _polynom operator-(const _polynom& other) const
+    {
+        int tSize = this->degree(), oSize = other.degree();
+
+        int maxSize = max(tSize, oSize);
+        //_polynom<T> result(0, maxSize);
+        _polynom<T> result(0, maxSize, this->name + L" + " + other.getName());
+        //_vector<T> result(0, maxSize);
+        //wcout << result[0];
+        //wcout << result.size()<<endl;
+        //result.print();
+        for (int i = 0; i <= maxSize; ++i)
+        {
+            if (i <= tSize) result[i] -= this->pol[i];
+            if (i <= oSize) result[i] -= other.pol[i];
         }
         //_polynom<T> resPol(result);
         //return resPol;

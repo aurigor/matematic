@@ -8,9 +8,12 @@
 #include"spline.h"
 #include"graphics.h"
 #include"polynom.h"
+#include"array.h"
+#include<time.h>
+#include"methods.h"
 //#include"lambda.h"
 
-namespace mymath
+namespace matic
 {
     int sum(int a, int b);
     

@@ -9,9 +9,16 @@
 #include <thread>
 #include <vector>
 #include <string>
+#include<functional>
 
 //#include<spdlog/spdlog.h>
 //#include
+//#define with_name(value) \
+//    }\
+//} value;
+#define with_name(value) \
+    }\
+} value;
 
 #include <io.h>
 #include <fcntl.h>
@@ -20,7 +27,36 @@ double exampleFunction(double x)
 {
     return x * x;  // Пример простой функции (x^2)
 }
+double square(double x)
+{
+    return x * x;  // Возвращает x^2
+}
 
+double difference(double x, double y)
+{
+    return y * y - x * x;  // Возвращает y^2 - x^2
+}
+
+double customFunction(double x, double y, double z)
+{
+    return x * y + z;  // Пример произвольной функции с тремя аргументами
+}
+double twoe1(double x, double y)
+{
+    return y * y - x * x;  // Возвращает y^2 - x^2
+}
+double twoe2(double x, double y)
+{
+    return y * y - x * x-10;  // Возвращает y^2 - x^2
+}
+double twoe3(double x, double y)
+{
+    return y * y - x * x*x;  // Возвращает y^2 - x^2
+}
+double Exp(double x)
+{
+    return exp(x);
+}
 int main()
 {
     //setlocale(LC_ALL, "rus");
@@ -28,65 +64,243 @@ int main()
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stderr), _O_U16TEXT);
 
-    //std::wcout << L"Unicode -- English -- Русский -- Ελληνικά -- Español." << std::endl;
-    // или
-    //wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");
+    double x_start = 0.0;
+    double x_end = 1.0;
+    int num_nodes = 10;
+    _splineSlay sp(x_start, x_end, 5, Exp);//создание сплайна с использованием библиотеки matic
 
-    //_polynom<double> p1(1, 5);
-    //wcout << p1[2]<<endl;
-    //_polynom<double> poly1, poly2, poly3;
-    //poly1.generateRandom(3, -10.0, 10.0);  // Генерируем случайный полином степени 3 с коэффициентами в диапазоне [-10, 10]
-    //poly1.setName(L"p1");
-    //poly1.print();
+    _vector<double> spline_x, spline_y;
+    int num_point_comparison = 100;
+    sp.generateSplineData(spline_x, spline_y, num_point_comparison);//полученние данных для графиков
 
-    //poly2.generateRandom(3, -10.0, 10.0);  // Генерируем случайный полином степени 3 с коэффициентами в диапазоне [-10, 10]
-    //poly2.setName(L"p2");
-    //poly2.print();
-    //
-    //poly3.setName(L"p3");
-    //poly3 = poly1 + poly2;
-    //poly3.print();
-    _polynom<int> poly1, poly2, poly3;
-    poly1.generateRandom(4, -10.0, 10.0);  // Генерируем случайный полином степени 3 с коэффициентами в диапазоне [-10, 10]
-    poly1.setName(L"p1");
-    poly1.print();
+    //получаем изначальные точки(по которым создавался спалайн)
+    const _vector<double>& original_x = sp.getX();
+    const _vector<double>& original_y = sp.getY();
 
-    poly2.generateRandom(4, -10.0, 10.0);  // Генерируем случайный полином степени 3 с коэффициентами в диапазоне [-10, 10]
-    poly2.setName(L"p2");
-    poly2.print();
+    //создаем значения для точного графика функции(которую мы интерполировали сплайном)
+    _vector<double> exact_x, exact_y;
+    double step_exact = (x_end - x_start) / (num_point_comparison - 1);
+    exact_x.resize(num_point_comparison);
+    exact_y.resize(num_point_comparison);
 
-    poly3.setName(L"p3");
-    poly3 = poly1 + poly2;
-    poly3.print();
-    poly3 = poly1 * poly2;
-    poly3.print();
+    for (int i = 0; i < num_point_comparison; ++i)
+    {
+        exact_x[i] = x_start + i * step_exact;
+        exact_y[i] = (Exp(exact_x[i]));
+    }
 
-    _polynom<double> poly11, poly12, poly13;
-    poly11.generateRandom(3, -10.0, 10.0);  // Генерируем случайный полином степени 3 с коэффициентами в диапазоне [-10, 10]
-    poly11.setName(L"p11");
-    poly11.print();
+    //строим график точной функции и ее интерпяляционое приближение сплайном
+    openGnuplot();
+    plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
+    wcloseGnuplot();
 
-    poly12.generateRandom(3, -10.0, 10.0);  // Генерируем случайный полином степени 3 с коэффициентами в диапазоне [-10, 10]
-    poly12.setName(L"p12");
-    poly12[poly12.degree()] = -poly11[poly11.degree()];
-    poly12[poly12.degree()-1] = -poly11[poly11.degree()-1];
-    poly12.print();
+    _vector<double> diff = exact_y - spline_y;//находим вектор разницы между точным решением и сплайном
+    _vector<double> zero(0, num_point_comparison);
+
+    //строим графики используя GnuPlot
+    openGnuplot();
+    plotSplineAndExactFunction(original_x, zero, spline_x, zero, exact_x, diff);
+    wcloseGnuplot();
+
+    _vector<double> diff2;
+    diff2 = sp.deviation();//находим отклонение по центру между соседними узлами
+    //diff2.rename(L"different");
+    wcout << L"max deviation is " << diff2.max()<<endl;
+
+
+    //double x_start = 0.0;
+    //double x_end = 5.0;
+    //int num_nodes =10;
+    //_splineSlay sp(0.0, 5.0, 20, square);
+
+    //_vector<double> spline_x, spline_y;
+    //sp.generateSplineData(spline_x, spline_y, 40);
+
+    //const _vector<double>& original_x = sp.getX();
+    //const _vector<double>& original_y = sp.getY();
+    //_vector<double> exact_x, exact_y;
+    //int num_points_exact = 100;  // Количество точек для точной функции
+    //double step_exact = (x_end - x_start) / (num_points_exact - 1);
+    //for (int i = 0; i < num_points_exact; ++i)
+    //{
+    //    double x = x_start + i * step_exact;
+    //    exact_x.add(x);
+    //    exact_y.add(square(x));  // Значения точной функции
+    //}
+    //openGnuplot();
+
+    //// 8. Строим график с использованием новой функции
+    //plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
+
+    //// 9. Закрываем Gnuplot
+    //wcloseGnuplot();
+
+
+
+
+    //// 1. Задаем начальные и конечные значения, а также количество узлов
+    //double x_start = 0.0;
+    //double x_end = 10.0;
+    //int num_nodes = 5;
+
+    //// 2. Определяем функцию для генерации значений
+    //auto func = [](double x) { return std::sin(x); };
+
+    //// 3. Создаем экземпляр кубического сплайна
+    //_spline<double> spline(x_start, x_end, num_nodes, func);
+
+    //// 4. Генерируем данные для сплайна
+    //std::vector<double> spline_x, spline_y;
+    //spline.generateSplineData(spline_x, spline_y);
+
+    //// 5. Получаем исходные узлы
+    //const std::vector<double>& original_x = spline.getX();
+    //const std::vector<double>& original_y = spline.getY();
+
+    //// 6. Генерируем данные для точной функции
+    //std::vector<double> exact_x, exact_y;
+    //int num_points_exact = 100;  // Количество точек для точной функции
+    //double step_exact = (x_end - x_start) / (num_points_exact - 1);
+    //for (int i = 0; i < num_points_exact; ++i)
+    //{
+    //    double x = x_start + i * step_exact;
+    //    exact_x.push_back(x);
+    //    exact_y.push_back(func(x));  // Значения точной функции
+    //}
+
+    //// 7. Открываем Gnuplot
+    //openGnuplot();
+
+    //// 8. Строим график с использованием новой функции
+    //plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
+
+    //// 9. Закрываем Gnuplot
+    //wcloseGnuplot();
+
+
+
+    //// 1. Задаем начальные и конечные значения, а также количество узлов
+    //num_nodes = 10;
+
+    //// 2. Определяем функцию для генерации значений
+    ////auto func = [](double x) { return std::sin(x); };
+
+    //// 3. Создаем экземпляр кубического сплайна
+    //_spline<double> spline1(x_start, x_end, num_nodes, func);
+
+    //// 4. Генерируем данные для сплайна
+    //std::vector<double> spline_x1, spline_y1;
+    //spline1.generateSplineData(spline_x1, spline_y1);
+
+    //// 5. Получаем исходные узлы
+    //const std::vector<double>& original_x1 = spline1.getX();
+    //const std::vector<double>& original_y1 = spline1.getY();
+
+
+    //// 7. Открываем Gnuplot
+    //openGnuplot();
+
+    //// 8. Строим график с использованием новой функции
+    //plotSplineAndExactFunction(original_x1, original_y1, spline_x1, spline_y1, exact_x, exact_y);
+
+    //// 9. Закрываем Gnuplot
+    //wcloseGnuplot();
+
+
+
+
+
+
+
+    test::ePolynom();
+    //double time= _Time(test::ePolynom());
+    //wcout << "time is " << time << "\n\n";
     
-    poly13.setName(L"p3");
-    poly13 = poly11 + poly12;
-    poly13.print();
-    poly13 = poly11 * poly12;
-    poly13.print();
-    
-    //_vector<int> a(0, 5), b(1, 6), d(0,5);
-    ////_vector<string> c(0, 5);
-    //cout << a.isLess(b) << endl;
-    //cout << a.isLess(d) << endl;
-    //cout << a.isEquals(d) << endl;
-
-    //cout << a;
 
     _polynom<double> f(0, 5);
+
+    //_function f1([](double& x) { return x * x; });
+    //_function f1(square);
+    //_function f2([](double x, double y) { return y * y - x * x; });  // y^2 - x^2
+    //Function f3([](double x, double y, double z) { return x * y + z; });
+    //Function f1(square);                      // f1 представляет x^2
+    //Function f2(difference);                  // f2 представляет y^2 - x^2
+    //Function f3(customFunction);              // f3 представляет x*y + z
+
+    // //Используем функции
+    //double x = 3.0;
+    //double y = 4.0;
+    //double z = 5.0;
+
+    //cout << "f1(" << x << ") = " << f1(x) << endl;            // Вычисляет f1(3.0) = 9.0
+    //cout << "f2(" << x << ", " << y << ") = " << f2(x, y) << endl;  // Вычисляет f2(3.0, 4.0) = 7.0
+    //cout << "f3(" << x << ", " << y << ", " << z << ") = " << f3(x, y, z) << endl;  // Вычисляет f3(3.0, 4.0, 5.0) = 17.0
+
+    //_function<double, double> obj(square);
+    ////auto obj = Fun<double, double>(square);
+    //_function obj(tfunct1);
+    double x = 5, y = 2;
+    _function<double, double, double> obj2;
+    obj2.set(difference);
+     wcout << L"\nobj2 = " << obj2(x, y) << endl;
+
+
+     _function<double, double, double> obj10, obj11, obj12, obj13, obj14, obj15;
+
+     obj10.set(difference);  // Устанавливаем функцию разности
+     wcout << L"\nobj2 = " << obj10(x, y) << endl;
+
+     // Используем toF и convertFunct для разных функций
+     _function<double, double> obj16;
+     obj16.set(toF<double, double>(square));
+
+     _function<double, double> obj17 = convertFunct<double, double>(square);
+     _function<double, double> obj18 = convertFunct<double, double>([](double x) { return x; });
+     _function<double, double> obj19 = convertFunct<double, double>([](double x) { return x; });
+     _function<double, double> obj20;
+     obj20.set(toF<double, double>([](double x) { return x; }));
+
+
+
+    // _function<double, double> obj3, obj4, obj5, obj6, obj7, obj8;
+
+    // function<double(double)> asd;
+    // auto asd1 = [](double x) { return x; };
+    // asd = asd1;
+    // obj3.set(asd1);
+    // obj4 = convertFunct(square);
+    // obj5 = convertFunct([](double x) { return x; });
+    // obj6 = convertFunct(asd);
+    // obj7 = convertFunct(asd1);
+    // obj8 = convertFunct(toF(asd1));
+    // toF(asd1);
+    // toF1(asd1);
+    //// _
+    // _function<double, double> obj1;
+    // obj1.set(square);
+    // _array<_function<double, double>> object;
+    // //object.add([](double x) { return x; });
+    // object.add(obj1);
+    // //object.add(square);
+    // //auto
+    // object.add(convertFunct([](double x) { return x; }));
+
+
+      _function<double, double> obj1;
+     obj1.set(square);
+     _array<_function<double, double>> object;
+     //object.add([](double x) { return x; });
+     object.add(obj1);
+     //object.add(square);
+     //auto
+     object.add(convertFunct<double, double>([](double x) { return x; }));
+
+
+     test::eArray();
+
+
+
+
     //test::demoSplineAndPlot();
     //_vector<int> a(0, 5), b(1, 6), d(0,5);
     ////_vector<string> c(0, 5);
@@ -728,165 +942,165 @@ int main()
 //        double y = spline.get_value(x);
 //        cout << "spline(" << x << ") = " << y << endl;
 //    }
-////
-////    // Создаем две матрицы 3x3
-////    _matrix<double> mat1(2.0, 3, 3);
-////    _matrix<double> mat2(1.0, 3, 3);
-////
-////    // Инициализируем элементы матриц
-////    for (int i = 0; i < 3; ++i)
-////    {
-////        for (int j = 0; j < 3; ++j)
-////        {
-////            mat1(i, j) = i + j;   // mat1 = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
-////            mat2(i, j) = i - j;   // mat2 = [[0, -1, -2], [1, 0, -1], [2, 1, 0]]
-////        }
-////    }
-////
-////    cout << "Матрица 1:\n";
-////    mat1.print();
-////
-////    cout << "\nМатрица 2:\n";
-////    mat2.print();
-////
-////    // Операция сложения матриц
-////    _matrix<double> sum = mat1 + mat2;
-////    cout << "\nСумма матриц 1 и 2:\n";
-////    sum.print();
-////
-////    // Операция вычитания матриц
-////    _matrix<double> diff = mat1 - mat2;
-////    cout << "\nРазность матриц 1 и 2:\n";
-////    diff.print();
-////
-////    // Операция умножения матриц
-////    _matrix<double> prod = mat1 * mat2;
-////    cout << "\nПроизведение матриц 1 и 2:\n";
-////    prod.print();
-////
-////    // Умножение матрицы на константу
-////    _matrix<double> scalarProd = mat1 * 3.0;
-////    cout << "\nУмножение матрицы 1 на 3.0:\n";
-////    scalarProd.print();
-////
-////
-////
-////    _matrix<double> mat11(2.0, 2, 2);
-////    _matrix<double> mat22(1.0, 3, 3);
-////    _matrix<double> diff1 = mat11 - mat22;
-////    _matrix<double> mult1 = mat11 * mat22;
-////    _matrix<double> sum1 = mat11 + mat22;
-////    cout << "\nРазность матриц 11 и 22:\n";
-////    diff1.print();
-////    mat11.print();
-////    mat22.print();
-////
-////    //Function f1([](double& x) { return x * x; });
-////    //Function f1(square);
-////    //Function f2([](double x, double y) { return y * y - x * x; });  // y^2 - x^2
-////    //Function f3([](double x, double y, double z) { return x * y + z; });
-////    //Function f1(square);                      // f1 представляет x^2
-////    //Function f2(difference);                  // f2 представляет y^2 - x^2
-////    //Function f3(customFunction);              // f3 представляет x*y + z
-////
-////    // Используем функции
-////    double x = 3.0;
-////    double y = 4.0;
-////    double z = 5.0;
-////
-////    //cout << "f1(" << x << ") = " << f1(x) << endl;            // Вычисляет f1(3.0) = 9.0
-////    //cout << "f2(" << x << ", " << y << ") = " << f2(x, y) << endl;  // Вычисляет f2(3.0, 4.0) = 7.0
-////    //cout << "f3(" << x << ", " << y << ", " << z << ") = " << f3(x, y, z) << endl;  // Вычисляет f3(3.0, 4.0, 5.0) = 17.0
-////#define inline_function(params) \
-////class \
-////{ \
-////    public: void operator() (params)\
-////    {\
-////
-////#define with_name(value) \
-////    }\
-////} value;
-////
-////#define with_params(...) __VA_ARGS__ // А это-то зачем тут? Читай ниже.
-////
-////
-////    inline_function(with_params(int a, int b))
-////    {
-////        printf("%d+%d=%d\n", a, b, a + b);
-////    } with_name(plus);
-////
-////    plus(2, 2);
-////
-////#define inline_funct(params) \
-////class \
-////{ \
-////    public: double operator() (params)\
-////    {\
-////
-////#define with_name(value) \
-////    }\
-////} value;
-////
-////#define with_params(...) __VA_ARGS__ // А это-то зачем тут? Читай ниже.
-////
-////
-////    inline_funct(with_params(double a, double b))
-////    {
-////        return a + b;
-////    } with_name(plus1);
-////
-////    cout << "\n sum = " << plus1(2, 2) << endl;
-////
-////    inline_funct(with_params(double x))
-////    {
-////        return x * x;
-////    }with_name(squars)
-////        //Function f1(squars);
-////        //_vector<inline_funct(with_params(double, double))> a;
-////        /*function asd = square;
-////        Function a(asd);
-////        cout << "f1(" << x << ") = " << a(x) << endl;*/
-////
-////        //Function f1([](double x) { return square(x); });
-////    //std::cout << "f1(" << x << ") = " << f1(x) << std::endl;
-////    //Function f2([](double x, double y) { return difference(x, y); });
-////   // std::cout << "f2(" << x << ", " << y << ") = " << f2(x, y) << std::endl;
-////    //cout << "\ntFunct = " << tFunct<double>(x, y, z) << endl;
-////    tfunct1 = square;
-////    cout << "\ntFunct = " << tfunct1(x)<< endl;
-////
-////    //Fun<double, double> obj(square);
-////    //auto obj = Fun<double, double>(square);
-////    _function obj(tfunct1);
-////    /*Fun<double, double> obj();
-////    obj.set(tfunct1);*/
-////    cout << "\nobj = " << obj(x) << endl;
-////    //Fun obj1(difference);
-////    //auto perefod = square;
-////    tfunct2 = difference;
-////    _function obj1(tfunct2);
-////    cout << "\nobj1 = " << obj1(x, y) << endl;
-////
-////    //Fun<double,(double,double)> obj2;
-////    _function<double, double, double> obj2;
-////    obj2.set(difference);
-////    cout << "\nobj2 = " << obj2(x, y) << endl;
-////
-////
-////    _function<double, double, double> obj3(difference);
-////    cout << "\nobj3 = " << obj3(x, y) << endl;
-////
-////    //_vector<_function<double, double, double>> vfun;
-////    _vector<_function<double, double, double>> vfun(_function<double, double, double>(), 3);
-////    vfun[0].set(difference);
-////    vfun[1].set([](double x, double y) { return sin(x) + cos(y); });
-////    vfun[2].set([](double x, double y) { return pow(x,3) + cos(y); });
-////    cout << endl;
-////    for (int i = 0; i < 3; ++i)
-////    {
-////        cout << "vfun[" << i << "](" << x << ", " << y << ") =" << vfun[i](x,y) << endl;
-////    }
-////    //_vector<_function> vfun;
-////    //Fun obj(tfunct1);
+//
+//    // Создаем две матрицы 3x3
+//    _matrix<double> mat1(2.0, 3, 3);
+//    _matrix<double> mat2(1.0, 3, 3);
+//
+//    // Инициализируем элементы матриц
+//    for (int i = 0; i < 3; ++i)
+//    {
+//        for (int j = 0; j < 3; ++j)
+//        {
+//            mat1(i, j) = i + j;   // mat1 = [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+//            mat2(i, j) = i - j;   // mat2 = [[0, -1, -2], [1, 0, -1], [2, 1, 0]]
+//        }
+//    }
+//
+//    cout << "Матрица 1:\n";
+//    mat1.print();
+//
+//    cout << "\nМатрица 2:\n";
+//    mat2.print();
+//
+//    // Операция сложения матриц
+//    _matrix<double> sum = mat1 + mat2;
+//    cout << "\nСумма матриц 1 и 2:\n";
+//    sum.print();
+//
+//    // Операция вычитания матриц
+//    _matrix<double> diff = mat1 - mat2;
+//    cout << "\nРазность матриц 1 и 2:\n";
+//    diff.print();
+//
+//    // Операция умножения матриц
+//    _matrix<double> prod = mat1 * mat2;
+//    cout << "\nПроизведение матриц 1 и 2:\n";
+//    prod.print();
+//
+//    // Умножение матрицы на константу
+//    _matrix<double> scalarProd = mat1 * 3.0;
+//    cout << "\nУмножение матрицы 1 на 3.0:\n";
+//    scalarProd.print();
+//
+//
+//
+//    _matrix<double> mat11(2.0, 2, 2);
+//    _matrix<double> mat22(1.0, 3, 3);
+//    _matrix<double> diff1 = mat11 - mat22;
+//    _matrix<double> mult1 = mat11 * mat22;
+//    _matrix<double> sum1 = mat11 + mat22;
+//    cout << "\nРазность матриц 11 и 22:\n";
+//    diff1.print();
+//    mat11.print();
+//    mat22.print();
+//
+//    //Function f1([](double& x) { return x * x; });
+//    //Function f1(square);
+//    //Function f2([](double x, double y) { return y * y - x * x; });  // y^2 - x^2
+//    //Function f3([](double x, double y, double z) { return x * y + z; });
+//    //Function f1(square);                      // f1 представляет x^2
+//    //Function f2(difference);                  // f2 представляет y^2 - x^2
+//    //Function f3(customFunction);              // f3 представляет x*y + z
+//
+//    // Используем функции
+//    double x = 3.0;
+//    double y = 4.0;
+//    double z = 5.0;
+//
+//    //cout << "f1(" << x << ") = " << f1(x) << endl;            // Вычисляет f1(3.0) = 9.0
+//    //cout << "f2(" << x << ", " << y << ") = " << f2(x, y) << endl;  // Вычисляет f2(3.0, 4.0) = 7.0
+//    //cout << "f3(" << x << ", " << y << ", " << z << ") = " << f3(x, y, z) << endl;  // Вычисляет f3(3.0, 4.0, 5.0) = 17.0
+//#define inline_function(params) \
+//class \
+//{ \
+//    public: void operator() (params)\
+//    {\
+//
+//#define with_name(value) \
+//    }\
+//} value;
+//
+//#define with_params(...) __VA_ARGS__ // А это-то зачем тут? Читай ниже.
+//
+//
+//    inline_function(with_params(int a, int b))
+//    {
+//        printf("%d+%d=%d\n", a, b, a + b);
+//    } with_name(plus);
+//
+//    plus(2, 2);
+//
+//#define inline_funct(params) \
+//class \
+//{ \
+//    public: double operator() (params)\
+//    {\
+//
+//#define with_name(value) \
+//    }\
+//} value;
+//
+//#define with_params(...) __VA_ARGS__ // А это-то зачем тут? Читай ниже.
+//
+//
+//    inline_funct(with_params(double a, double b))
+//    {
+//        return a + b;
+//    } with_name(plus1);
+//
+//    cout << "\n sum = " << plus1(2, 2) << endl;
+//
+//    inline_funct(with_params(double x))
+//    {
+//        return x * x;
+//    }with_name(squars)
+//        //Function f1(squars);
+//        //_vector<inline_funct(with_params(double, double))> a;
+//        /*function asd = square;
+//        Function a(asd);
+//        cout << "f1(" << x << ") = " << a(x) << endl;*/
+//
+//        //Function f1([](double x) { return square(x); });
+//    //std::cout << "f1(" << x << ") = " << f1(x) << std::endl;
+//    //Function f2([](double x, double y) { return difference(x, y); });
+//   // std::cout << "f2(" << x << ", " << y << ") = " << f2(x, y) << std::endl;
+//    //cout << "\ntFunct = " << tFunct<double>(x, y, z) << endl;
+//    tfunct1 = square;
+//    cout << "\ntFunct = " << tfunct1(x)<< endl;
+//
+//    //Fun<double, double> obj(square);
+//    //auto obj = Fun<double, double>(square);
+//    _function obj(tfunct1);
+//    /*Fun<double, double> obj();
+//    obj.set(tfunct1);*/
+//    cout << "\nobj = " << obj(x) << endl;
+//    //Fun obj1(difference);
+//    //auto perefod = square;
+//    tfunct2 = difference;
+//    _function obj1(tfunct2);
+//    cout << "\nobj1 = " << obj1(x, y) << endl;
+//
+//    //Fun<double,(double,double)> obj2;
+//    _function<double, double, double> obj2;
+//    obj2.set(difference);
+//    cout << "\nobj2 = " << obj2(x, y) << endl;
+//
+//
+//    _function<double, double, double> obj3(difference);
+//    cout << "\nobj3 = " << obj3(x, y) << endl;
+//
+//    //_vector<_function<double, double, double>> vfun;
+//    _vector<_function<double, double, double>> vfun(_function<double, double, double>(), 3);
+//    vfun[0].set(difference);
+//    vfun[1].set([](double x, double y) { return sin(x) + cos(y); });
+//    vfun[2].set([](double x, double y) { return pow(x,3) + cos(y); });
+//    cout << endl;
+//    for (int i = 0; i < 3; ++i)
+//    {
+//        cout << "vfun[" << i << "](" << x << ", " << y << ") =" << vfun[i](x,y) << endl;
+//    }
+//    //_vector<_function> vfun;
+//    //Fun obj(tfunct1);
 //    return 0;
 //}
