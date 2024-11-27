@@ -66,8 +66,23 @@ int main()
 
     double x_start = 0.0;
     double x_end = 1.0;
-    int num_nodes = 10;
-    _splineSlay sp(x_start, x_end, 5, Exp);//создание сплайна с использованием библиотеки matic
+    int num_nodes = 5;
+    _splineSlay sp(x_start, x_end, num_nodes, Exp);//создание сплайна с использованием библиотеки matic
+    /*wcout.setf(ios::scientific);*/
+    //создание подынтегральных функций
+    _function<double, double> x_exp, x_spline;
+    x_exp = convertFunct<double, double>([](double x) { return x * exp(x); });// точная функция x*exp(x)
+    x_spline = convertFunct<double, double>([sp](double x) { return x * sp.cubicSpline(x); });// x*sp, где sp - это сплайн построенный на функции exp(x)
+    wcout << "integral x*exp(x) = " << intagration(0, 1, x_exp) << endl;
+    wcout << "integral x*spline5(x) = " << intagration(0, 1, x_spline) << endl;
+
+    num_nodes = 10;
+    _splineSlay sp10(x_start, x_end, num_nodes, Exp);
+    _function<double, double> x_spline10;
+    x_spline10 = convertFunct<double, double>([sp10](double x) { return x * sp10.cubicSpline(x); });// x*sp, где sp - это сплайн построенный на функции exp(x)
+    wcout << "integral x*spline10(x) = " << intagration(0, 1, x_spline10) << endl;
+
+
 
     _vector<double> spline_x, spline_y;
     int num_point_comparison = 100;
@@ -89,24 +104,29 @@ int main()
         exact_y[i] = (Exp(exact_x[i]));
     }
 
-    //строим график точной функции и ее интерпяляционое приближение сплайном
-    openGnuplot();
-    plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
-    wcloseGnuplot();
 
-    _vector<double> diff = exact_y - spline_y;//находим вектор разницы между точным решением и сплайном
-    _vector<double> zero(0, num_point_comparison);
+    
 
-    //строим графики используя GnuPlot
-    openGnuplot();
-    plotSplineAndExactFunction(original_x, zero, spline_x, zero, exact_x, diff);
-    wcloseGnuplot();
 
-    _vector<double> diff2;
-    diff2 = sp.deviation();//находим отклонение по центру между соседними узлами
-    //diff2.rename(L"different");
-    wcout << L"max deviation is " << diff2.max()<<endl;
+    ////строим график точной функции и ее интерпяляционое приближение сплайном
+    //openGnuplot();
+    //plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
+    //wcloseGnuplot();
 
+    //_vector<double> diff = exact_y - spline_y;//находим вектор разницы между точным решением и сплайном
+    //_vector<double> zero(0, num_point_comparison);
+
+    ////строим графики используя GnuPlot
+    //openGnuplot();
+    //plotSplineAndExactFunction(original_x, zero, spline_x, zero, exact_x, diff);
+    //wcloseGnuplot();
+
+    //_vector<double> diff2;
+    //diff2 = sp.deviation();//находим отклонение по центру между соседними узлами
+    ////diff2.rename(L"different");
+    //wcout << L"max deviation is " << diff2.max()<<endl;
+
+    
 
     //double x_start = 0.0;
     //double x_end = 5.0;

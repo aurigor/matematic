@@ -11,6 +11,7 @@
 #include"array.h"
 #include<time.h>
 #include"methods.h"
+#include"integration.h"
 //#include"lambda.h"
 
 namespace matic
