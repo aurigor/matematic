@@ -12,7 +12,7 @@ public:
     _matrix(T a = 0, int rows = 1, int cols = 1) : mat(rows, vector<T>(cols, a)) {}
 
     // Конструктор по умолчанию
-    _matrix() {}
+    /*_matrix() {} = default;*/
 
     // Деструктор
     ~_matrix() {}

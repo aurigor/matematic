@@ -19,6 +19,7 @@ double zeros(double x)
 
 class _splineSlay {
 public:
+    _splineSlay() {}
     _splineSlay(double x_start, double x_end, int num_nodes, function<double(double)> func)
     {
         this->numNodes = num_nodes;
@@ -165,7 +166,7 @@ public:
         int i = 0;
 
         // Найти интервал, в котором находится xi
-        while (i < numNodes - 1 && xi > x[i + 1])
+        while (i < numNodes - 2 && xi > x[i + 1])
         {
             ++i;
         }
@@ -262,6 +263,328 @@ private:
     //_array<_function<double, double>> fi(convertFunct(fzero<double>), 4, L"fi");
     //_array<_function<double, double>> fi(convertFunct<double,double>(fzero<double, double>), 4, L"fi");
     //double alf, bet;
+    _vector<double> alf, bet;
+    _vector<double> m;
+    _vector<double> x, y, a, b, c, d;
+    int numNodes;
+};
+
+class _spline_parametric {
+public:
+    //_splineSlay(_vector<double> x_start, _vector<double> x_end, int num_nodes, function<double(double)> func)
+    //_spline_parametric(int dimensional, _matrix<double> x, int num_nodes, _array<function<double(double)>> func)
+    _spline_parametric(int dimensional, double tmin, double tmax, int num_nodes, _array<function<double(double)>> func)
+    {
+        //if (func.size() == dimensional && x.rows() == dimensional)
+        if (func.size() == dimensional)
+        {
+            this->numNodes = num_nodes;
+            this->p.resize(dimensional);
+            this->fun = func;
+            this->tmin = tmin;
+            this->tmax = tmax;
+
+            for (int i = 0; i < dimensional; ++i)
+            {
+                _splineSlay tempSpline(tmin, tmax, num_nodes, func[i]);
+                p[i] = move(tempSpline);
+            }
+        }
+    }
+
+    double cubicSpline(double xi) const
+    {
+        //int i = 0;
+
+        //// Найти интервал, в котором находится xi
+        //while (i < numNodes - 1 && xi > x[i + 1])
+        //{
+        //    ++i;
+        //}
+
+        //// Вычисление значения сплайна
+        //double dx = x[i + 1] - x[i];
+        //double t1 = (xi - x[i]);
+        //double t = (xi - x[i]) / (dx);
+
+
+        //double cc1 = fi[0](t), cc2 = fi[1](t), cc3 = fi[2](t), cc4 = fi[3](t);
+        //return fi[0](t) * y[i] + fi[1](t) * y[i + 1] + fi[2](t) * dx * m[i] + fi[3](t) * dx * m[i + 1];
+
+    }
+
+    // Генерация данных для построения графика
+    void generateSplineData(_vector<double>& spline_x, _vector<double>& spline_y, int num_points = 50) const
+    {
+        spline_x.resize(num_points);
+        spline_y.resize(num_points);
+
+        double t_start = this->tmin;
+        double t_end = this->tmax;
+        double step = (t_end - t_start) / (num_points - 1);
+
+        _vector<double> t;
+        p[0].generateSplineData(t, spline_x, num_points);
+        p[1].generateSplineData(t, spline_y, num_points);
+        /*for (int i = 0; i < num_points; ++i)
+        {
+            
+        }*/
+    }
+    //const _vector<double> deviation()
+    //{
+    //    int a;
+    //    double step = (this->x[numNodes - 1] - this->x[0]) / (numNodes - 1);
+    //    //double step = (this->x[numNodes - 1]-this->x[1]) / (numNodes - 2);
+
+
+    //    _vector<double> x1, y1, sp1;
+    //    x1.resize(numNodes - 1);
+    //    y1.resize(numNodes - 1);
+    //    sp1.resize(numNodes - 1);
+    //    //cout << "\n\n";
+    //    for (int i = 0; i < numNodes - 1; ++i)
+    //    {
+    //        x1[i] = this->x[0] + (1 / 2.0 + i) * step;
+    //        y1[i] = fun(x1[i]);
+    //        sp1[i] = cubicSpline(x1[i]);
+    //    }
+    //    _vector<double> diff;
+    //    diff = y1 - sp1;
+    //    //temp
+    //    //diff.map(fabs);
+    //    for (int i = 0; i < numNodes - 1; ++i)
+    //    {
+    //        diff[i] = fabs(diff[i]);
+    //    }
+
+    //    return diff;
+    //    //diff=fabs
+
+    //}
+
+    //// Получение узлов
+    //const _vector<double>& getX() const
+    //{
+    //    return x;
+    //}
+
+    // Получение значений функции
+    const _vector<double>& get(int i) const
+    {
+        return p[i].getY();
+    }
+
+    /*void printSplinePoints() const
+    {
+        for (int i = 0; i < numNodes; ++i)
+        {
+            std::cout << "x: " << x[i] << ", y: " << y[i] << std::endl;
+        }
+    }*/
+
+private:
+
+    _array<function<double(double)>> fun;
+    _array<_splineSlay> p;
+    double tmax, tmin;
+
+    _vector<double> x, y, a, b, c, d;
+    _matrix<double> point;
+    int numNodes;
+};
+
+class _splineB {
+public:
+    _splineB() {}
+    _splineB(double x_start, double x_end, int num_nodes, function<double(double)> func)
+    {
+        this->numNodes = num_nodes;
+        this->x.resize(num_nodes);
+        this->y.resize(num_nodes);
+        this->a.resize(num_nodes);
+        this->b.resize(num_nodes - 1);
+        this->c.resize(num_nodes);
+        this->d.resize(num_nodes - 1);
+        this->fi.resize(4);
+        this->m.resize(num_nodes);
+        this->alf.resize(num_nodes);
+        this->bet.resize(num_nodes);
+        fun = func;
+
+
+        fi[0] = convertFunct<double, double>([](double t) { return (1 - t) * (1 - t) * (1 + 2 * t); });
+        fi[1] = convertFunct<double, double>([](double t) { return (t * t) * (3 - 2 * t); });
+        fi[2] = convertFunct<double, double>([](double t) { return t * (1 - t) * (1 - t); });
+        fi[3] = convertFunct<double, double>([](double t) { return -t * t * (1 - t); });
+
+
+        double step = (x_end - x_start) / (num_nodes - 1);
+
+
+
+        //cout << "\n\n";
+        for (int i = 0; i < num_nodes; ++i)
+        {
+            this->x[i] = x_start + i * step;
+            this->y[i] = func(this->x[i]);
+            //zaglushka
+            this->alf[i] = 1 / 2.0;
+            this->bet[i] = 1 / 2.0;
+
+            //cout << "(" << x[i] << ", " << y[i] << ")" << endl;
+        }
+        //cout << "\n\n";
+        //this->c[0] = 0;
+        double dxl = (func(x_start + 1e-10) - func(x_start)) / 1e-10;
+        double dxr = (func(x_end + 1e-10) - func(x_end)) / 1e-10;
+        this->c[0] = (y[1] - y[0]) / step;
+        //this->c[0] = dxl;
+        for (int i = 1; i < num_nodes - 1; ++i)
+        {
+            this->c[i] = 3 * (alf[i] * (y[i + 1] - y[i]) / step + bet[i] * (y[i] - y[i - 1]) / step);
+            //this->c[i] = (alf[i] * (y[i + 1] - y[i]) / step + bet[i] * (y[i] - y[i - 1]) / step);
+        }
+        //this->c[numNodes-1] = 0;
+        //this->c[numNodes - 1] = 2* x_end;
+        this->c[numNodes - 1] = (y[num_nodes - 1] - y[num_nodes - 2]) / step;
+        _vector<double> A{ 0,num_nodes }, B{ 0,num_nodes }, C{ 0,num_nodes }, D{ 0,num_nodes };
+
+        initCoefficientsForProgon(A, B, C, D);
+
+
+
+
+
+        // Заполнение узлов и значений функции
+        /*T step = (x_end - x_start) / (num_nodes - 1);
+        cout << "\n\n";
+        for (int i = 0; i < num_nodes; ++i)
+        {
+            this->x[i] = x_start + i * step;
+            this->y[i] = func(this->x[i]);
+            cout << "(" << x[i] << ", " << y[i] << ")" << endl;
+        }
+        cout << "\n\n";*/
+        // Вычисление коэффициентов сплайна
+        computeCoefficients(A, B, C, D);
+    }
+    void initCoefficientsForProgon(_vector<double>& A, _vector<double>& B, _vector<double>& C, _vector<double>& D)
+    {
+        A[0] = 0;
+        B[0] = 1;
+        C[0] = 0;
+        D[0] = c[0];
+        for (int i = 1; i < numNodes - 1; ++i)
+        {
+            A[i] = alf[i];
+            B[i] = 2;
+            C[i] = bet[i];
+            //D[i] = y[i];
+            D[i] = c[i];
+        }
+        A[numNodes - 1] = 0;
+        B[numNodes - 1] = 1;
+        C[numNodes - 1] = 0;
+        D[numNodes - 1] = c[numNodes - 1];
+    }
+    void computeCoefficients(_vector<double> A, _vector<double> B, _vector<double> C, _vector<double> D)
+    {
+        progonka(A, B, C, D, numNodes, m);
+    }
+
+    double cubicSpline(double xi) const
+    {
+        int i = 0;
+
+        // Найти интервал, в котором находится xi
+        while (i < numNodes - 2 && xi > x[i + 1])
+        {
+            ++i;
+        }
+
+        // Вычисление значения сплайна
+        double dx = x[i + 1] - x[i];
+        double t1 = (xi - x[i]);
+        double t = (xi - x[i]) / (dx);
+
+
+        double cc1 = fi[0](t), cc2 = fi[1](t), cc3 = fi[2](t), cc4 = fi[3](t);
+        return fi[0](t) * y[i] + fi[1](t) * y[i + 1] + fi[2](t) * dx * m[i] + fi[3](t) * dx * m[i + 1];
+
+    }
+
+    // Генерация данных для построения графика
+    void generateSplineData(_vector<double>& spline_x, _vector<double>& spline_y, int num_points = 50) const
+    {
+        spline_x.resize(num_points);
+        spline_y.resize(num_points);
+
+        double x_start = x[0];
+        double x_end = x[numNodes - 1];
+        double step = (x_end - x_start) / (num_points - 1);
+
+        for (int i = 0; i < num_points; ++i)
+        {
+            spline_x[i] = x_start + i * step;
+            spline_y[i] = cubicSpline(spline_x[i]);
+        }
+    }
+    const _vector<double> deviation()
+    {
+        int a;
+        double step = (this->x[numNodes - 1] - this->x[0]) / (numNodes - 1);
+        //double step = (this->x[numNodes - 1]-this->x[1]) / (numNodes - 2);
+
+
+        _vector<double> x1, y1, sp1;
+        x1.resize(numNodes - 1);
+        y1.resize(numNodes - 1);
+        sp1.resize(numNodes - 1);
+        //cout << "\n\n";
+        for (int i = 0; i < numNodes - 1; ++i)
+        {
+            x1[i] = this->x[0] + (1 / 2.0 + i) * step;
+            y1[i] = fun(x1[i]);
+            sp1[i] = cubicSpline(x1[i]);
+        }
+        _vector<double> diff;
+        diff = y1 - sp1;
+        //temp
+        //diff.map(fabs);
+        for (int i = 0; i < numNodes - 1; ++i)
+        {
+            diff[i] = fabs(diff[i]);
+        }
+
+        return diff;
+        //diff=fabs
+
+    }
+
+    // Получение узлов
+    const _vector<double>& getX() const
+    {
+        return x;
+    }
+
+    // Получение значений функции
+    const _vector<double>& getY() const
+    {
+        return y;
+    }
+
+    void printSplinePoints() const
+    {
+        for (int i = 0; i < numNodes; ++i)
+        {
+            std::cout << "x: " << x[i] << ", y: " << y[i] << std::endl;
+        }
+    }
+
+private:
+    function<double(double)> fun;
+    _array<_function<double, double>> fi;
     _vector<double> alf, bet;
     _vector<double> m;
     _vector<double> x, y, a, b, c, d;

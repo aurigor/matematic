@@ -64,48 +64,118 @@ int main()
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stderr), _O_U16TEXT);
 
-    double x_start = 0.0;
-    double x_end = 1.0;
-    int num_nodes = 5;
-    _splineSlay sp(x_start, x_end, num_nodes, Exp);//создание сплайна с использованием библиотеки matic
-    /*wcout.setf(ios::scientific);*/
-    //создание подынтегральных функций
-    _function<double, double> x_exp, x_spline;
-    x_exp = convertFunct<double, double>([](double x) { return x * exp(x); });// точная функция x*exp(x)
-    x_spline = convertFunct<double, double>([sp](double x) { return x * sp.cubicSpline(x); });// x*sp, где sp - это сплайн построенный на функции exp(x)
-    wcout << "integral x*exp(x) = " << intagration(0, 1, x_exp) << endl;
-    wcout << "integral x*spline5(x) = " << intagration(0, 1, x_spline) << endl;
+    //double x_start = 0.0;
+    //double x_end = 1.0;
+    //int num_nodes = 5;
+    //_splineSlay sp(x_start, x_end, num_nodes, Exp);//создание сплайна с использованием библиотеки matic
+    ///*wcout.setf(ios::scientific);*/
+    ////создание подынтегральных функций
+    //_function<double, double> x_exp, x_spline;
+    //x_exp = convertFunct<double, double>([](double x) { return x * exp(x); });// точная функция x*exp(x)
+    //x_spline = convertFunct<double, double>([sp](double x) { return x * sp.cubicSpline(x); });// x*sp, где sp - это сплайн построенный на функции exp(x)
+    //wcout << "integral x*exp(x) = " << intagration(0, 1, x_exp) << endl;
+    //wcout << "integral x*spline5(x) = " << intagration(0, 1, x_spline) << endl;
 
-    num_nodes = 10;
-    _splineSlay sp10(x_start, x_end, num_nodes, Exp);
-    _function<double, double> x_spline10;
-    x_spline10 = convertFunct<double, double>([sp10](double x) { return x * sp10.cubicSpline(x); });// x*sp, где sp - это сплайн построенный на функции exp(x)
-    wcout << "integral x*spline10(x) = " << intagration(0, 1, x_spline10) << endl;
+    //num_nodes = 10;
+    //_splineSlay sp10(x_start, x_end, num_nodes, Exp);
+    //_function<double, double> x_spline10;
+    //x_spline10 = convertFunct<double, double>([sp10](double x) { return x * sp10.cubicSpline(x); });// x*sp, где sp - это сплайн построенный на функции exp(x)
+    //wcout << "integral x*spline10(x) = " << intagration(0, 1, x_spline10) << endl;
 
 
+
+    //_vector<double> spline_x, spline_y;
+    //int num_point_comparison = 100;
+    //sp.generateSplineData(spline_x, spline_y, num_point_comparison);//полученние данных для графиков
+
+    ////получаем изначальные точки(по которым создавался спалайн)
+    //const _vector<double>& original_x = sp.getX();
+    //const _vector<double>& original_y = sp.getY();
+
+    ////создаем значения для точного графика функции(которую мы интерполировали сплайном)
+    //_vector<double> exact_x, exact_y;
+    //double step_exact = (x_end - x_start) / (num_point_comparison - 1);
+    //exact_x.resize(num_point_comparison);
+    //exact_y.resize(num_point_comparison);
+
+    //for (int i = 0; i < num_point_comparison; ++i)
+    //{
+    //    exact_x[i] = x_start + i * step_exact;
+    //    exact_y[i] = (Exp(exact_x[i]));
+    //}
+
+
+
+    //parametric spline
+   /* int dimensional = 2;
+    _array<function<double(double)>> fparametric;
+    fparametric.resize(dimensional);
+    fparametric[0] = [](double t) { return cos(t); };
+    fparametric[1] = [](double t) { return sin(t); };
+    double tmin = 0, tmax = 3.14;
+    _spline_parametric parSP(dimensional, tmin, tmax, 10, fparametric);
+
+    const _vector<double>& original_x = parSP.get(0);
+    const _vector<double>& original_y = parSP.get(1);
 
     _vector<double> spline_x, spline_y;
     int num_point_comparison = 100;
-    sp.generateSplineData(spline_x, spline_y, num_point_comparison);//полученние данных для графиков
+    parSP.generateSplineData(spline_x, spline_y, num_point_comparison);
 
-    //получаем изначальные точки(по которым создавался спалайн)
-    const _vector<double>& original_x = sp.getX();
-    const _vector<double>& original_y = sp.getY();
-
-    //создаем значения для точного графика функции(которую мы интерполировали сплайном)
     _vector<double> exact_x, exact_y;
-    double step_exact = (x_end - x_start) / (num_point_comparison - 1);
+    double step_exact = (tmax - tmin) / (num_point_comparison - 1);
     exact_x.resize(num_point_comparison);
     exact_y.resize(num_point_comparison);
 
     for (int i = 0; i < num_point_comparison; ++i)
     {
-        exact_x[i] = x_start + i * step_exact;
-        exact_y[i] = (Exp(exact_x[i]));
+        double t = tmin + i * step_exact;
+        exact_x[i] = fparametric[0](t);
+        exact_y[i] = fparametric[1](t);
+    }
+    
+    openGnuplot();
+    plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
+    wcloseGnuplot();*/
+
+    //parametric spline ver 2
+    int dimensional = 2;
+    _array<function<double(double)>> fparametric;
+    fparametric.resize(dimensional);
+    fparametric[0] = [](double t) { return sqrt(2)*cos(t)/(1+pow(sin(t),2)); };
+    fparametric[1] = [](double t) { return sqrt(2) * cos(t)*sin(t) / (1 + pow(sin(t), 2));
+        };
+    double pi = 3.14;
+    double tmin = -pi/2.0, tmax = 3*pi/2.0;
+    //double tmin =-pi , tmax = pi;
+    _spline_parametric parSP(dimensional, tmin, tmax, 20, fparametric);
+
+    const _vector<double>& original_x = parSP.get(0);
+    const _vector<double>& original_y = parSP.get(1);
+
+    _vector<double> spline_x, spline_y;
+    int num_point_comparison = 100;
+    parSP.generateSplineData(spline_x, spline_y, num_point_comparison);
+
+    _vector<double> exact_x, exact_y;
+    double step_exact = (tmax - tmin) / (num_point_comparison - 1);
+    exact_x.resize(num_point_comparison);
+    exact_y.resize(num_point_comparison);
+
+    for (int i = 0; i < num_point_comparison; ++i)
+    {
+        double t = tmin + i * step_exact;
+        exact_x[i] = fparametric[0](t);
+        exact_y[i] = fparametric[1](t);
     }
 
+    openGnuplot();
+    plotSplineAndExactFunction(original_x, original_y, spline_x, spline_y, exact_x, exact_y);
+    wcloseGnuplot();
 
-    
+    //_vector<double> diff2;
+    //diff2 = sp.deviation();//находим отклонение по центру между соседними узлами
+    //wcout << L"max deviation is " << diff2.max()<<endl;
 
 
     ////строим график точной функции и ее интерпяляционое приближение сплайном
